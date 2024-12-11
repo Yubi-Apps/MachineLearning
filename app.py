@@ -53,10 +53,36 @@ class GetPredictionOutput(Resource):
                 file.save(file_path)
 
                 # Preprocess image and make a prediction
-                result = prediction.predict_image_class(file_path, prediction.model, prediction.class_names, prediction.img_height, prediction.img_width)
-                
-                # Return prediction output
-                return jsonify({'predicted_class': result})
+                predicted_class = prediction.predict_image_class(
+                    file_path, 
+                    prediction.model, 
+                    prediction.class_names, 
+                    prediction.img_height, 
+                    prediction.img_width
+                )
+
+                # Generate description based on predicted class
+                if predicted_class == 'SL17 Phthorimaea operculella (Zeller)':
+                    description = "Phthorimaea operculella, commonly known as the potato tuber moth, is a pest of potato crops worldwide."
+                elif predicted_class == 'SL15 Myzus persicae (Sulzer)':
+                    description = "Myzus persicae, the green peach aphid, is a major agricultural pest affecting various plants and crops."
+                elif predicted_class == 'SL01 Agrotis ipsilon (Hufnagel)':
+                    description = "Agrotis ipsilon, or the black cutworm, is a significant pest of young plants, especially maize and wheat."
+                elif predicted_class == 'SL05 Bemisia tabaci (Gennadius)':
+                    description = "Bemisia tabaci, the whitefly, is a sap-sucking insect known for transmitting plant viruses."
+                elif predicted_class == 'SL10 Epilachna vigintioctopunctata (Fabricius)':
+                    description = "Epilachna vigintioctopunctata, or the 28-spotted ladybird, feeds on solanaceous crops, particularly potatoes."
+                elif predicted_class == 'SL03 Aphis gossypii Glover':
+                    description = "Aphis gossypii, also called the cotton aphid, is a common pest in cotton and melon crops."
+                elif predicted_class == 'SL06 Brachytrypes portentosus Lichtenstein':
+                    description = "Brachytrypes portentosus, known as the large cricket, is found in agricultural and forested habitats."
+                elif predicted_class == 'SL02 Amrasca devastans (Distant)':
+                    description = "Amrasca devastans, or the cotton leafhopper, severely impacts cotton and vegetable crops."
+                else:
+                    description = "No description available for this class."
+
+                # Return prediction output with description
+                return jsonify({'predicted_class': predicted_class, 'description': description})
 
             return {'error': 'Invalid file format. Only png, jpg, and jpeg are allowed.'}
 
